@@ -76,37 +76,39 @@ def register_view(request):
             photo = files.get("photo")
             consent = data.get("consent", "false").lower() == "true"
 
-            if not (full_name and email and phone and dob_str and sex and address and id_type and id_number):
+            # **Validations**
+            if not all([full_name, email, phone, dob_str, sex, address, id_type, id_number, id_doc, photo]):
                 return JsonResponse({"error": "All fields are required"}, status=400)
 
-            # Uniqueness check
             if Voter.objects.filter(email=email).exists():
                 return JsonResponse({"error": "Email already registered"}, status=400)
             if Voter.objects.filter(phone=phone).exists():
                 return JsonResponse({"error": "Phone number already registered"}, status=400)
 
-            # Age validation
             dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
             if dob.year > 2006:
                 return JsonResponse({"error": "You must be at least 18 years old"}, status=400)
 
-            # ID Validation
             if id_type == "Aadhar Card" and not (len(id_number) == 12 and id_number.isdigit()):
                 return JsonResponse({"error": "Aadhar Card must have 12 digits"}, status=400)
             if id_type == "Voter Id" and not re.match(r"^[A-Z]{3}[0-9]{7}$", id_number):
                 return JsonResponse({"error": "Voter ID must start with 3 uppercase letters followed by 7 digits"}, status=400)
 
+            # **Create Voter Record**
+            unique_id = generate_unique_id()
             voter = Voter.objects.create(
                 full_name=full_name, email=email, phone=phone, dob=dob, sex=sex, address=address,
                 id_type=id_type, id_number=id_number, id_doc=id_doc, photo=photo,
-                unique_id=generate_unique_id(), consent=consent
+                unique_id=unique_id, consent=consent
             )
             voter.save()
 
-            return JsonResponse({"message": "Voter registered successfully", "UniqueId": voter.unique_id}, status=201)
+            return JsonResponse({"message": "Registration successful!", "unique_id": voter.unique_id}, status=201)
 
         except Exception as e:
             return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
+
+        return JsonResponse({"error": "Invalid request method"}, status=405)
 
     return render(request, 'register.html')
 
@@ -155,11 +157,15 @@ def ForgetPassword(request):
     return render(request, 'forgot.html')
 
 
-
-
 def dashboard_view(request):
-    return render(request, 'dashboard.html')
-
+    user_data = {
+        'unique_id': '123456789',
+        'name': 'John Doe',
+        'age': 49,
+        'email': 'johndoe@gmail.com',
+        'phone': '8978549562',
+    }
+    return render(request, 'dashboard.html', {'user': user_data})
 
 def home(request):
     return render(request, 'home.html')
@@ -185,49 +191,32 @@ def upload_id_document(request, unique_id):
         file_url = request.build_absolute_uri(settings.MEDIA_URL + file_path)
         return JsonResponse({"message": "ID document uploaded successfully", "file_url": file_url})
     return JsonResponse({"error": "Invalid request"}, status=400)
-"""""
-def set_password(request, token):
-    reset_request = get_object_or_404(PasswordReset, token=token, is_active=True)
+import logging
 
-    if request.method == "POST":
-        form = SetPasswordForm(request.POST)
-        if form.is_valid():
-            user = reset_request.user
-            user.password = make_password(form.cleaned_data["password"])
-            user.save()
-            reset_request.is_active = False
-            reset_request.save()
-            return redirect("login")
-    else:
-        form = SetPasswordForm()
+logger = logging.getLogger(__name__)
 
-    return render(request, "setpassword.html", {"form": form})
-"""""
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from myprojectdpoll.models import SetPassword  # Replace with your actual model
+
 @csrf_exempt
-def set_password(request):
+def set_password(request, unique_id):
     if request.method == "POST":
-        unique_id = request.POST.get("unique_id")
         password = request.POST.get("password")
-
-        if not validate_password(password):  # Ensure password meets criteria
-            return JsonResponse({"error": "Password does not meet security requirements"}, status=400)
+        if not password:
+            return JsonResponse({"error": "Password is required"}, status=400)
 
         try:
-            voter = Voter.objects.get(unique_id=unique_id)
-            user, created = User.objects.get_or_create(username=unique_id, defaults={"email": voter.email})
-            user.set_password(password)
-            user.save()
-            return JsonResponse({"message": "Password set successfully"}, status=200)
-        except Voter.DoesNotExist:
-            return JsonResponse({"error": "Invalid Unique ID"}, status=400)
-
+            # Save password to the database
+            set_password_entry = SetPassword.objects.create(
+                unique_id=unique_id,
+                password=password
+            )
+            set_password_entry.save()
+            return JsonResponse({"message": "Password successfully updated"}, status=200)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=405)
-
-
-def setpassword(request):
-    return render(request, 'setpassword.html')
-
-   
 
 
 @csrf_exempt

@@ -15,6 +15,7 @@ import os
 import urllib.parse
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
+import mongoengine
 import urllib.parse
 
 
@@ -41,8 +42,7 @@ SECRET_KEY = 'django-insecure-k7ksj(mpf6o63d(1qe6&9+by4@i++mq0lm*p#fj9)aqu_+&@=x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['16.16.100.176', 'localhost', '127.0.0.1']
-
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -92,12 +92,46 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dpoll.wsgi.application'
 
 
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+#DATABASES = {
+   # 'default': {
+       # 'ENGINE': 'djongo',
+       # 'NAME': 'd_poll_db',  # Database name (it will be created automatically)
+      #  'ENFORCE_SCHEMA': False,
+        #'CLIENT': {
+           # 'host': 'mongodb+srv://abhinandana:Abhi@nandu8589@cluster1.cdj4h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1',
+       # }
+   # }
+#}
+#username = urllib.parse.quote_plus('abhinandana')
+#password = urllib.parse.quote_plus('Abhi@nandu8589')
 
 
 load_dotenv()  # Load environment variables
 
 
+# Encode username and password
+username = urllib.parse.quote_plus("abhinandana")
+password = urllib.parse.quote_plus("Abhi@nandu8589")  # Encodes special characters
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'NAME': 'd_poll_db',  # Your database name
+        'CLIENT': {
+            'host': f'mongodb+srv://{username}:{password}@cluster1.cdj4h.mongodb.net/d_poll_db?retryWrites=true&w=majority&appName=Cluster1',
+            'authSource': 'admin',  # Adjust if needed
+        },
+        'ENFORCE_SCHEMA': False
+    }
+}"""
 
+"""mongoengine.connect(
+    db='d_poll_db',
+    host=f'mongodb+srv://{username}:{password}@cluster1.cdj4h.mongodb.net/d_poll_db?retryWrites=true&w=majority&appName=Cluster1'
+)
+"""
 
 DATABASES = {
     "default": {
@@ -105,7 +139,7 @@ DATABASES = {
         "NAME": "postgres",
         "USER": "postgres",
         "PASSWORD": "abhinandu8589",
-        "HOST": "16.16.100.176",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }
@@ -144,7 +178,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_URL = 'static/'
+STATIC_URL = '\static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"), 
 ]

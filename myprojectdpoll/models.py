@@ -34,6 +34,7 @@ class Voter(models.Model):
 
     def check_password(self, raw_password):
         return check_password(raw_password, self.password)
+    
     def set_password(self, password, confirm_password):
         if password != confirm_password:
             raise ValueError("Passwords do not match")
@@ -64,17 +65,23 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.name
     
+class SetPassword(models.Model):
+    id=models.AutoField(primary_key=True)
+    unique_id = models.CharField(max_length=8, unique=True)
+    password = models.CharField(max_length=128)
 
-class SetPasswordForm(forms.Form):
-    password = forms.CharField(widget=forms.PasswordInput, min_length=8)
-    confirm_password = forms.CharField(widget=forms.PasswordInput, min_length=8)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
-
+    def set_password(self, password, confirm_password):
         if password != confirm_password:
-            raise forms.ValidationError("Passwords do not match")
+            raise ValueError("Passwords do not match")
+        if len(password) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+        if not any(char.isdigit() for char in password):
+            raise ValueError("Password must contain at least one digit")
+        if not any(char.isalpha() for char in password):
+            raise ValueError("Password must contain at least one letter")
+        self.password = make_password(password)
+        self.save()
 
-        return cleaned_data    
+    def __str__(self):
+        return self.unique_id
+    
