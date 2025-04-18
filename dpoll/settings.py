@@ -114,24 +114,7 @@ load_dotenv()  # Load environment variables
 # Encode username and password
 username = urllib.parse.quote_plus("abhinandana")
 password = urllib.parse.quote_plus("Abhi@nandu8589")  # Encodes special characters
-"""
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'd_poll_db',  # Your database name
-        'CLIENT': {
-            'host': f'mongodb+srv://{username}:{password}@cluster1.cdj4h.mongodb.net/d_poll_db?retryWrites=true&w=majority&appName=Cluster1',
-            'authSource': 'admin',  # Adjust if needed
-        },
-        'ENFORCE_SCHEMA': False
-    }
-}"""
 
-"""mongoengine.connect(
-    db='d_poll_db',
-    host=f'mongodb+srv://{username}:{password}@cluster1.cdj4h.mongodb.net/d_poll_db?retryWrites=true&w=majority&appName=Cluster1'
-)
-"""
 
 DATABASES = {
     "default": {
@@ -178,7 +161,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_URL = '\static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"), 
 ]
@@ -195,7 +178,7 @@ import os
 
 # Add this at the end of the file
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR , 'static')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Static files will be collected here
 

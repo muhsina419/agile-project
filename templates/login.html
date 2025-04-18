@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>D-POLL Login</title>
-    
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -17,30 +17,35 @@
     <div class="container">
         <div class="login-box">
             <h2>Login</h2>
-            
-            <label for="unique-id">Unique Id</label>
-            <div class="input-group">
-                <i class="fa fa-user"></i>
-                <input type="text" id="unique-id" placeholder="Enter Unique ID">
-                <button class="small-btn">Know your Unique ID</button>
-            </div>
 
-            <label for="password">Password</label>
-            <div class="input-group">
-                <i class="fa fa-lock"></i>
-                <input type="password" id="password" placeholder="Enter Password">
-                <button class="small-btn" onclick="window.location.href='{% url 'forgot' %}';">Forgot Password</button>
+            <!-- ✅ Form tag added -->
+            <form id="loginForm">
+                {% csrf_token %}
+                
+                <label for="unique_id">Unique Id</label>
+                <div class="input-group">
+                    <i class="fa fa-user"></i>
+                    <input type="text" id="unique_id" name="unique_id" placeholder="Enter Unique ID" required>
+                    <button class="small-btn" type="button">Know your Unique ID</button>
+                </div>
 
-            </div>
+                <label for="password">Password</label>
+                <div class="input-group">
+                    <i class="fa fa-lock"></i>
+                    <input type="password" id="password" name="password" placeholder="Enter Password" required>
+                    <button class="small-btn" type="button" onclick="window.location.href='{% url 'forgot' %}';">Forgot Password</button>
+                </div>
 
-            <button class="submit-btn"onclick="window.location.href='{% url 'Dashboard' % }';">Submit</button>
+                <button class="submit-btn" type="submit">Submit</button>
+            </form>
         </div>
 
         <div class="register-box">
             <h2>New Here?</h2>
-            <button class="register-btn"onclick="window.location.href='{% url 'register' %}';">Register</button>
+            <button class="register-btn" onclick="window.location.href='{% url 'register' %}';">Register</button>
         </div>
     </div>
+
     <script src="{% static 'js/login.js' %}"></script>
 </body>
 </html>

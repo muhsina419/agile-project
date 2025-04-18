@@ -268,7 +268,7 @@ def set_password(request, unique_id):
         try:
             set_password_entry = SetPassword.objects.create(
                 unique_id=unique_id,
-                password=password
+                password=make_password(password)
             )
             set_password_entry.save()
             return JsonResponse({"message": "Password successfully updated"}, status=200)
@@ -277,10 +277,16 @@ def set_password(request, unique_id):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
+from django.contrib.auth.hashers import check_password
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import SetPassword, Voter
+from datetime import datetime
+import json
 
 @csrf_exempt
 def login_voter(request):
-    if request.method == 'POST':  # Handle API login
+    if request.method == 'POST':
         try:
             data = json.loads(request.body)
             unique_id = data.get('unique_id')
@@ -289,17 +295,50 @@ def login_voter(request):
             if not unique_id or not password:
                 return JsonResponse({'error': 'Please provide both unique ID and password'}, status=400)
 
-            user = authenticate(username=unique_id, password=password)
-            if user is not None:
-                login(request, user)
-                return JsonResponse({'message': 'Login successful'})
+            try:
+                user = SetPassword.objects.get(unique_id=unique_id)
+                print(f"User found: {user}")  # Move this print statement here
+            except SetPassword.DoesNotExist:
+                return JsonResponse({'error': 'User not found'}, status=404)
+
+            # Secure password validation
+            print(f"Provided password: {password}")
+            print(f"Stored hashed password: {user.password}")
+            if check_password(password, user.password):
+                try:
+                    voter = Voter.objects.get(unique_id=unique_id)
+                except Voter.DoesNotExist:
+                    return JsonResponse({'error': 'Voter details not found'}, status=404)
+
+                # Calculate age
+                today = datetime.today().date()
+                age = today.year - voter.dob.year - ((today.month, today.day) < (voter.dob.month, voter.dob.day))
+
+                # Store user data in session
+                request.session['user_data'] = {
+                    'unique_id': voter.unique_id,
+                    'name': voter.full_name,
+                    'age': age,
+                    'email': voter.email,
+                    'phone': voter.phone,
+                    'photo': voter.photo.url if voter.photo else ''
+                }
+
+                return JsonResponse({'message': 'Login successful', 'redirect_url': '/api/dashboard/'})
             else:
+                print("Password validation failed")
                 return JsonResponse({'error': 'Invalid credentials'}, status=401)
 
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
 
-    elif request.method == 'GET':  # Handle login page rendering
+    elif request.method == 'GET':
         return render(request, 'login.html')
 
     return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+def dashboard_view(request):
+    user_data = request.session.get('user_data')
+    if not user_data:
+        return redirect('/login/')  # Redirect to login if user data is not in session
+    return render(request, 'dashboard.html', {'user': user_data})

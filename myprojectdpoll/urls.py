@@ -15,6 +15,7 @@ urlpatterns = [
     path('logout/', views.Logout, name='logout'),
     path('otp/', views.otp, name='otp'),
     path('setpassword/<str:unique_id>/', views.set_password, name='set_password'),
+
 ]
 
 # Add static file handling for development

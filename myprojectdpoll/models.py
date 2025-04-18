@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib.auth.models import User
 import random
 import string
-from django import forms
+
 
 class Voter(models.Model):
     full_name = models.CharField(max_length=255)
@@ -11,20 +11,26 @@ class Voter(models.Model):
     phone = models.CharField(max_length=20)
     dob = models.DateField()
     sex = models.CharField(max_length=10)
-    address = models.CharField(max_length=255)  # Removed max_length and blank=True to match table
+    address = models.CharField(max_length=255)
     id_type = models.CharField(max_length=50)
     id_number = models.CharField(max_length=50)
     id_doc = models.FileField(upload_to="documents/", null=True, blank=True)
     photo = models.ImageField(upload_to="images/", null=True, blank=True)
     unique_id = models.CharField(max_length=8, unique=True)
     consent = models.BooleanField(default=False)
+    password = models.CharField(
+        max_length=128,
+        default=make_password("defaultpassword")  # Default hashed password
+    )
 
     def save(self, *args, **kwargs):
+        """Override save method to generate a unique ID if not provided."""
         if not self.unique_id:
             self.unique_id = self.generate_unique_id()
         super().save(*args, **kwargs)
 
     def generate_unique_id(self):
+        """Generate a unique ID consisting of 2 letters and 6 digits."""
         while True:
             letters = ''.join(random.choices(string.ascii_uppercase, k=2))
             numbers = ''.join(random.choices(string.digits, k=6))
@@ -33,9 +39,11 @@ class Voter(models.Model):
                 return unique_id
 
     def check_password(self, raw_password):
+        """Validate the provided password against the stored hashed password."""
         return check_password(raw_password, self.password)
-    
+
     def set_password(self, password, confirm_password):
+        """Set and hash the password after validation."""
         if password != confirm_password:
             raise ValueError("Passwords do not match")
         if len(password) < 8:
@@ -50,9 +58,14 @@ class Voter(models.Model):
     def __str__(self):
         return self.full_name
 
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     forget_password_token = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
 
 class UserProfile(models.Model):
     unique_id = models.CharField(max_length=20, unique=True)
@@ -64,13 +77,15 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class SetPassword(models.Model):
-    id=models.AutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     unique_id = models.CharField(max_length=8, unique=True)
     password = models.CharField(max_length=128)
 
     def set_password(self, password, confirm_password):
+        """Set and hash the password after validation."""
         if password != confirm_password:
             raise ValueError("Passwords do not match")
         if len(password) < 8:
@@ -82,6 +97,9 @@ class SetPassword(models.Model):
         self.password = make_password(password)
         self.save()
 
+    def check_password(self, raw_password):
+        """Validate the provided password against the stored hashed password."""
+        return check_password(raw_password, self.password)
+
     def __str__(self):
         return self.unique_id
-    
