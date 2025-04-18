@@ -20,7 +20,7 @@ document.getElementById("passwordForm").addEventListener("submit", async functio
     console.log("Extracted Unique ID from js:", uniqueId );
 
     try {
-        let response = await fetch(`/setpassword/${uniqueId}/`, {  // Correct URL with leading slash
+        let response = await fetch(`/api/setpassword/${uniqueId}/`, {  // Correct URL with leading slash
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -28,12 +28,13 @@ document.getElementById("passwordForm").addEventListener("submit", async functio
             },
             body: new URLSearchParams({ password: password })  // Safer way to send form data
         });
+
         console.log(response);  // Log the response status
         let result = await response.json();
 
         if (response.ok) {
             alert(result.message);
-            window.location.href = "/otp/";  // Redirect after success
+            window.location.href = "/api/otp/";  // Redirect after success
         } else {
             alert(result.error || "Failed to set password.");
         }

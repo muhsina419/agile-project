@@ -40,7 +40,7 @@ document.querySelector('.submit-btn').addEventListener('click', function() {
     // Simulate a dummy login
     if (unique_id === 'testuser' && password === 'password123') {
         alert('Login successful (dummy login)');
-        window.location.href = '/dashboard/';  // Redirect to dashboard
+        window.location.href = '/api/dashboard/';  // Redirect to dashboard
     } else {
         alert('Invalid credentials (dummy login)');
     }

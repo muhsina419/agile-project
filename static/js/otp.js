@@ -18,13 +18,33 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    document.getElementById("verify-btn").addEventListener("click", () => {
+    document.getElementById("verify-btn").addEventListener("click", async () => {
         let otp = "";
         inputs.forEach(input => otp += input.value);
+
         if (otp.length === 6) {
-            alert("OTP Verified: " + otp);
+            try {
+                const response = await fetch("/api/verify-otp/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ otp: otp }),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message || "OTP Verified Successfully!");
+                    window.location.href = "/api/dashboard/"; // Redirect on success
+                } else {
+                    alert(result.error || "Invalid OTP. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error verifying OTP:", error);
+                alert("Something went wrong. Please try again later.");
+            }
         } else {
-            alert("Please enter a valid OTP.");
+            alert("Please enter a valid 6-digit OTP.");
         }
     });
 });

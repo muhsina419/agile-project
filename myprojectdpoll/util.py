@@ -8,3 +8,7 @@ def send_otp(request):
     request.session['otp_valid_date']=valid_date
 
     print((f"Your one time password is {otp}"))
+    
+def generate_otp():
+    """Generate a 6-digit OTP."""
+    return random.randint(100000, 999999)

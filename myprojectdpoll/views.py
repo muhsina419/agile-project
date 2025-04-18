@@ -28,7 +28,9 @@ from datetime import datetime, timedelta
 import pyotp
 from django.core.files.storage import default_storage
 from .forms import SetPasswordForm
-
+import random
+from datetime import datetime, timedelta
+import pyotp
 
 # **Unique ID Generator**
 def generate_unique_id():
@@ -112,6 +114,17 @@ def register_view(request):
 
     return render(request, 'register.html')
 
+def send_otp(phone_number, otp):
+    """Send OTP to the user's phone number using an SMS gateway."""
+    # Replace this with actual SMS gateway integration
+    print(f"Sending OTP {otp} to phone number {phone_number}")
+    # Example: Use Twilio, Nexmo, or any SMS API here
+    # twilio_client.messages.create(
+    #     body=f"Your OTP is {otp}",
+    #     from_="+1234567890",  # Replace with your Twilio number
+    #     to=phone_number
+    # )
+    return True
 
 # **OTP Verification & Login**
 @csrf_exempt
@@ -133,7 +146,7 @@ def otp(request):
                     login(request, user)
                     del request.session['otp_secret_key']
                     del request.session['otp_valid_until']
-                    return redirect('/dashboard/')
+                    return redirect('/api/dashboard/')
                 else:
                     error_message = "Invalid OTP"
             else:
@@ -142,7 +155,35 @@ def otp(request):
             error_message = "OTP not found"
 
     return render(request, 'otp.html', {'error_message': error_message})
+from .util import generate_otp, send_otp
 
+@csrf_exempt
+def send_otp_view(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            phone_number = data.get("phone")
+
+            if not phone_number:
+                return JsonResponse({"error": "Phone number is required"}, status=400)
+
+            # Generate OTP
+            otp = generate_otp()
+
+            # Save OTP and expiration time in session
+            request.session["otp"] = otp
+            request.session["otp_valid_until"] = (datetime.now() + timedelta(minutes=5)).isoformat()
+
+            # Send OTP to the phone number
+            if send_otp(phone_number, otp):
+                return JsonResponse({"message": "OTP sent successfully"}, status=200)
+            else:
+                return JsonResponse({"error": "Failed to send OTP"}, status=500)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def Logout(request):
     logout(request)
@@ -199,15 +240,32 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from myprojectdpoll.models import SetPassword  # Replace with your actual model
 
+import re
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from .models import SetPassword  # Make sure this import is correct
+
+# **Password Validation**
+def validate_password(password):
+    return bool(re.fullmatch(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", password))
+
 @csrf_exempt
 def set_password(request, unique_id):
+    if request.method == "GET":
+        return render(request, 'setpassword.html', {'unique_id': unique_id})
+
     if request.method == "POST":
         password = request.POST.get("password")
         if not password:
             return JsonResponse({"error": "Password is required"}, status=400)
 
+        if not validate_password(password):
+            return JsonResponse({
+                "error": "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character."
+            }, status=400)
+
         try:
-            # Save password to the database
             set_password_entry = SetPassword.objects.create(
                 unique_id=unique_id,
                 password=password
@@ -216,6 +274,7 @@ def set_password(request, unique_id):
             return JsonResponse({"message": "Password successfully updated"}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
