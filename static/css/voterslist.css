@@ -1,0 +1,115 @@
+.voters-header h1 {
+  font-size: 32px;
+  margin-bottom: 0;
+}
+
+.voters-header p {
+  font-size: 14px;
+  margin-top: 5px;
+  color: #555;
+}
+
+.search-container {
+  margin: 20px 0;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.voters-list-container {
+  border: 1px solid #3e5e8a;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.voter-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  gap: 30px;
+}
+
+.voter-row.header {
+  font-weight: bold;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 10px;
+}
+
+.voter-photo {
+  width: 40px;
+  height: 40px;
+  background-color: black;
+  border-radius: 50%;
+}
+
+.voter-id, .voter-name {
+  background-color: #61a0ff;
+  padding: 8px 15px;
+  border-radius: 6px;
+  color: #000;
+  font-weight: 500;
+  min-width: 150px;
+  text-align: center;
+}
+
+.no-voters {
+  padding: 20px;
+  text-align: center;
+  color: #999;
+}
+
+.hidden {
+  display: none;
+}
+.voters-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.voter-row {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.voter-row.header {
+  font-weight: bold;
+  background-color: #f5f5f5;
+}
+
+.voter-photo img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.voter-details {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.voter-details .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}

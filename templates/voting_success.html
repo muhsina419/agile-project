@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vote Success | D-POLL</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/voting_success.css' %}">
+</head>
+<body>
+  <header>
+    <div class="menu-icon">
+      <span></span><span></span><span></span>
+    </div>
+    <h1 class="logo">D-POLL</h1>
+    <div class="profile">
+      <img src="profile.jpg" alt="User"/>
+    </div>
+  </header>
+
+  <main class="success-container">
+    <div class="checkmark">✔️</div>
+    <h2>Thank You</h2>
+    <p class="success-text">Your Vote has been successfully recorded 🎉</p>
+
+    <div class="vote-info">
+      <div class="info-row"><span>Candidate Selected :</span> <span>Candidate Name</span></div>
+      <div class="info-row"><span>Transaction Id :</span> <span>1234567891011</span></div>
+      <div class="info-row"><span>Date And Time :</span> <span id="dateTime"></span></div>
+    </div>
+
+    <button onclick="returnToDashboard()">Return To Dashboard</button>
+  </main>
+
+  <script src="{% static 'js/voting_success.js' %}"></script>
+</body>
+</html>

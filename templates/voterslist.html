@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-Poll - Voters List</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/voterslist.css' %}">
+</head>
+<!-- Page Header -->
+<div class="voters-header">
+  <h1>Voters List</h1>
+  <p>List of voters in the system</p>
+</div>
+
+<!-- Search Bar -->
+<div class="search-container">
+  <input type="text" placeholder="Search Voter" class="search-input" onkeyup="filterVoters()">
+</div>
+
+<!-- Voters List Table Styled as Cards -->
+<div class="voters-list-container">
+  <div class="voter-row header">
+    <span>Photo</span>
+    <span>Unique ID</span>
+    <span>Name</span>
+  </div>
+
+  {% for voter in voters %}
+  <div class="voter-row" onclick="showVoterDetails({{ voter|safe }})">
+    <div class="voter-photo">
+      <img src="{{ voter.photo|default:'/static/images/default-photo.png' }}" alt="Voter Photo">
+    </div>
+    <div class="voter-id">{{ voter.unique_id }}</div>
+    <div class="voter-name">{{ voter.name }}</div>
+  </div>
+  {% empty %}
+  <div class="no-voters">No voters found.</div>
+  {% endfor %}
+</div>
+
+<!-- Voter Details Modal -->
+<div id="voterDetails" class="voter-details hidden">
+  <!-- Voter details will be dynamically inserted here -->
+</div>
+<script src="{% static 'js/voterslist.js' %}"></script>
+{% endblock %}

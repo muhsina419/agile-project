@@ -103,3 +103,12 @@ class SetPassword(models.Model):
 
     def __str__(self):
         return self.unique_id
+    
+class Candidate(models.Model):
+    name = models.CharField(max_length=255)
+    representation = models.CharField(max_length=255)
+    symbol = models.ImageField(upload_to='symbols/', null=True, blank=True)
+    photo = models.ImageField(upload_to='photos/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name

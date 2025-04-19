@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+        <!-- Main content -->
+        <div class="main-content">
+            <!-- Topbar -->
+            <div class="topbar">
+                <div class="page-title">
+                    {% block page_title %}Welcome{% endblock %}
+                </div>
+                <div class="profile-section">
+                    <img src="{% static 'images/user.png' %}" alt="User" id="userImage" class="profile-icon">
+                    <div id="userDetails" class="user-details hidden">
+                        <p><strong>{{ user.username }}</strong></p>
+                        <p>{{ user.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Content -->
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'js/base.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cast Your Vote</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/cast_vote.css' %}">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="menu-icon">☰</div>
+    <div class="logo">DPOLL</div>
+    <img src="profile.jpg" alt="Profile Picture" class="profile-pic" />
+  </header>
+
+  <!-- Main Voting Section -->
+  <main class="voting-container">
+    <h2>Cast Your Vote</h2>
+    <p>Select a candidate and submit your vote.</p>
+
+    <form id="votingForm" class="voting-form">
+      <table>
+        <thead>
+          <tr>
+            <th>SI No</th>
+            <th>Candidate Name</th>
+            <th>Avatar</th>
+            <th>Symbol</th>
+            <th>Vote</th>
+          </tr>
+        </thead>
+        <tbody id="candidateTableBody">
+          <!-- Populated dynamically by JS -->
+        </tbody>
+      </table>
+
+      <div class="button-group">
+        <button type="submit" class="submit-btn">Submit Vote</button>
+        <button type="button" class="clear-btn" id="clearBtn">Clear</button>
+      </div>
+    </form>
+  </main>
+  <script src="{% static 'js/cast_vote.js' %}"></script>
+</body>
+</html>

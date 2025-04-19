@@ -3,35 +3,35 @@ import random
 import string
 import json
 import uuid
-from django.http import JsonResponse
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import check_password, make_password
-from rest_framework import serializers
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from .models import Voter, Profile
-from django.core.mail import send_mail
-from django.contrib.auth.tokens import default_token_generator
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.utils.http import urlsafe_base64_encode
-from django.utils.encoding import force_bytes
-from django.template.loader import render_to_string
-from django.conf import settings
-from django.contrib.auth.forms import SetPasswordForm
-from .helpers import send_forget_password_mail
-from django.contrib.auth import authenticate, login, logout
-from .util import send_otp
-from datetime import datetime, timedelta
-import pyotp
-from django.core.files.storage import default_storage
-from .forms import SetPasswordForm
-import random
 from datetime import datetime, timedelta
 import pyotp
 
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib import messages
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.files.storage import default_storage
+from django.core.mail import send_mail
+
+from rest_framework import serializers
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
+from .models import Voter, Profile, SetPassword
+from .models import Candidate  # Ensure this import is correct
+from .forms import SetPasswordForm
+from .helpers import send_forget_password_mail
+from .util import send_otp, generate_otp
+
+from .models import SetPassword  # Make sure this import is correct
 # **Unique ID Generator**
 def generate_unique_id():
     letters = ''.join(random.choices(string.ascii_uppercase, k=2))
@@ -185,28 +185,6 @@ def send_otp_view(request):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-def Logout(request):
-    logout(request)
-    return redirect('/')
-
-
-def ChangePassword(request, token):
-    return render(request, 'changepass.html')
-
-
-def ForgetPassword(request):
-    return render(request, 'forgot.html')
-
-
-def dashboard_view(request):
-    user_data = {
-        'unique_id': '123456789',
-        'name': 'John Doe',
-        'age': 49,
-        'email': 'johndoe@gmail.com',
-        'phone': '8978549562',
-    }
-    return render(request, 'dashboard.html', {'user': user_data})
 
 def home(request):
     return render(request, 'home.html')
@@ -235,16 +213,6 @@ def upload_id_document(request, unique_id):
 import logging
 
 logger = logging.getLogger(__name__)
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from myprojectdpoll.models import SetPassword  # Replace with your actual model
-
-import re
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
-from .models import SetPassword  # Make sure this import is correct
 
 # **Password Validation**
 def validate_password(password):
@@ -297,13 +265,9 @@ def login_voter(request):
 
             try:
                 user = SetPassword.objects.get(unique_id=unique_id)
-                print(f"User found: {user}")  # Move this print statement here
             except SetPassword.DoesNotExist:
                 return JsonResponse({'error': 'User not found'}, status=404)
 
-            # Secure password validation
-            print(f"Provided password: {password}")
-            print(f"Stored hashed password: {user.password}")
             if check_password(password, user.password):
                 try:
                     voter = Voter.objects.get(unique_id=unique_id)
@@ -342,3 +306,67 @@ def dashboard_view(request):
     if not user_data:
         return redirect('/login/')  # Redirect to login if user data is not in session
     return render(request, 'dashboard.html', {'user': user_data})
+
+from django.http import JsonResponse
+from .models import Voter
+
+def voters_list_api(request):
+    voters = Voter.objects.all().values('unique_id', 'full_name', 'photo', 'email', 'phone')
+    for voter in voters:
+        voter['photo'] = request.build_absolute_uri(voter['photo']) if voter['photo'] else None
+    return JsonResponse(list(voters), safe=False)
+
+def Logout(request):
+    logout(request)
+    return redirect('/')
+
+def profile_view(request):
+    user = request.user
+    return render(request, 'profile.html', {'user': user})
+
+def ChangePassword(request, token):
+    return render(request, 'changepass.html')
+
+
+def ForgetPassword(request):
+    return render(request, 'forgot.html')
+
+def voters_list_view(request):
+    return render(request, 'voterslist.html')
+
+def candidates_list_view(request):
+    candidates = Candidate.objects.all()  # Fetch all candidates from the database
+    return render(request, 'candidates_list.html', {'candidates': candidates})
+
+def cast_vote_view(request):
+    return render(request, 'cast_vote.html')
+
+def results_view(request):
+    return render(request, 'results.html')
+
+def edit_details_view(request):
+    return render(request, 'edit_details.html')
+
+def polls_view(request):
+    return render(request, 'polls.html')
+
+def get_candidates(request):
+    candidates = Candidate.objects.all().values("id", "name", "photo", "symbol")
+    return JsonResponse(list(candidates), safe=False)
+
+@csrf_exempt
+def submit_vote(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            candidate_id = data.get("candidateId")
+            # Process the vote (e.g., save to database)
+            return JsonResponse({"message": "Vote submitted successfully!"})
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+    return JsonResponse({"error": "Invalid request method."}, status=405)
+
+from django.shortcuts import render
+
+def voting_success(request):
+    return render(request, 'voting_success.html')

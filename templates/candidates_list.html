@@ -1,0 +1,72 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-Poll - Candidates List</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/candidates_list.css' %}">
+</head>
+<body>
+  <div class="header">
+    <div class="menu-icon">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <div class="title">D-POLL</div>
+    <div class="user-profile">
+      <img src="user.png" alt="User Profile" id="profile-img" />
+      <div class="user-dropdown" id="user-dropdown">
+        <div><span>Unique Id</span><span>****************</span></div>
+        <div><span>Voting Status</span><span>Pending / Voted</span></div>
+        <div><span>Eligibility</span><span>Yes / No</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h2>Candidates List</h2>
+    <input type="text" id="search-input" placeholder="Search candidates..." />
+
+    <table class="candidate-table">
+      <thead>
+        <tr>
+          <th>Photo</th>
+          <th>Candidate Name</th>
+          <th>Candidate Representation</th>
+          <th>Symbol</th>
+        </tr>
+      </thead>
+      <tbody id="candidate-body">
+        {% for candidate in candidates %}
+        <tr>
+          <td>
+            {% if candidate.photo %}
+              <img src="{{ candidate.photo.url }}" alt="{{ candidate.name }}" />
+            {% else %}
+              <img src="https://via.placeholder.com/40" alt="Placeholder Photo" />
+            {% endif %}
+          </td>
+          <td>{{ candidate.name }}</td>
+          <td>{{ candidate.representation }}</td>
+          <td>
+            {% if candidate.symbol %}
+              <img src="{{ candidate.symbol.url }}" alt="Symbol" class="symbol" />
+            {% else %}
+              <img src="https://via.placeholder.com/30" alt="Placeholder Symbol" />
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4">No candidates found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <script src="{% static 'js/candidates_list.js' %}"></script>
+</body>
+</html>

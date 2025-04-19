@@ -4,10 +4,23 @@ function toggleMenu() {
 }
 
 function navigate(page) {
-    alert("Navigating to " + page);
+    const body = document.body;
+    const urls = {
+        votersList: body.dataset.votersListUrl,
+        candidatesList: body.dataset.candidatesListUrl,
+        castVote: body.dataset.castVoteUrl,
+        result: body.dataset.resultsUrl,
+        editDetails: body.dataset.editDetailsUrl
+    };
+
+    if (urls[page]) {
+        window.location.href = urls[page];
+    } else {
+        console.error("Navigation failed: Page not found -", page);
+    }
 }
 
 function logout() {
-    alert("Logging out...");
-    window.location.href = "login.html";
+    const logoutUrl = document.body.dataset.logoutUrl;
+    window.location.href = logoutUrl;
 }

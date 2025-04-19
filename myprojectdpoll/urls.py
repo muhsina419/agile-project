@@ -15,9 +15,20 @@ urlpatterns = [
     path('logout/', views.Logout, name='logout'),
     path('otp/', views.otp, name='otp'),
     path('setpassword/<str:unique_id>/', views.set_password, name='set_password'),
-
+    path('voters-list/', views.voters_list_view, name='voters_list'),
+    path('candidates-list/', views.candidates_list_view, name='candidates_list'),
+    path('cast-vote/', views.cast_vote_view, name='cast_vote'),
+    path('results/', views.results_view, name='results'),
+    path('edit-details/', views.edit_details_view, name='edit_details'),
+    path('profile/', views.profile_view, name='profile'),
+    path('api/voters/', views.voters_list_api, name='voters_list_api'),
+    path('polls/', views.polls_view, name='polls'), 
+    path('candidates', views.get_candidates, name='get_candidates'),
+    path('vote', views.submit_vote, name='submit_vote'),
+    path('voting-success/', views.voting_success, name='voting_success'),
 ]
 
 # Add static file handling for development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)  

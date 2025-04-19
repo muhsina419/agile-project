@@ -7,7 +7,14 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/dashboard.css' %}">
 </head>
-<body>
+<body
+    data-voters-list-url="{% url 'voters_list' %}"
+    data-candidates-list-url="{% url 'candidates_list' %}"
+    data-cast-vote-url="{% url 'cast_vote' %}"
+    data-results-url="{% url 'results' %}"
+    data-edit-details-url="{% url 'edit_details' %}"
+    data-logout-url="{% url 'logout' %}"
+>
     <header>
         <div class="menu-icon" onclick="toggleMenu()">☰</div>
         <h1>D-POLL</h1>
