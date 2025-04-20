@@ -1,36 +1,45 @@
-<script>
-    document.querySelector('.submit-btn').addEventListener('click', function() {
-        const username = document.getElementById('unique-id').value;
-        const password = document.getElementById('password').value;
+document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
 
-        fetch('/myprojectdpoll/login/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message) {
-                alert(data.message);
+            const uniqueId = document.getElementById('unique_id').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            const response = await fetch('/api/login/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ unique_id: uniqueId, password: password })
+            });
+            console.log({ unique_id, password });
+            
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = result.redirect_url;
             } else {
-                alert('Error: ' + JSON.stringify(data));
+                alert(result.error || 'Login failed');
             }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
         });
-    });
-    document.querySelector('.submit-btn').addEventListener('click', function() {
-        const username = document.getElementById('unique-id').value;
-        const password = document.getElementById('password').value;
+    }
+});
 
-        if (!username || !password) {
-            alert('Please fill in all fields.');
-            return;
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
         }
-
-        // Proceed with fetch request...
-    });
-</script>
+    }
+    return cookieValue;
+}

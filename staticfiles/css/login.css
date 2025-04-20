@@ -8,13 +8,14 @@
 }
 
 body {
-    background-color: #fffff;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000;
     text-align: center;
 }
 
+/* Header Styling */
 .header {
-    background-color:  #4A90E2;
+    background-color: #4A90E2;
     padding: 20px;
     text-align: left;
 }
@@ -26,6 +27,7 @@ body {
     padding-left: 20px;
 }
 
+/* Container Layout */
 .container {
     display: flex;
     justify-content: center;
@@ -36,13 +38,15 @@ body {
     padding: 20px;
 }
 
+/* Login and Register Box */
 .login-box, .register-box {
-    background:  #4A90E2;
+    background: #4A90E2;
     padding: 30px;
     border-radius: 8px;
     width: 100%;
     max-width: 350px;
     text-align: left;
+    color: white;
 }
 
 h2 {
@@ -56,6 +60,7 @@ label {
     font-size: 14px;
 }
 
+/* Input Group */
 .input-group {
     display: flex;
     align-items: center;
@@ -63,25 +68,28 @@ label {
     padding: 10px;
     border-radius: 5px;
     margin-top: 5px;
+    width: 100%;
+    gap: 8px;
 }
 
 .input-group i {
-    color: #bbb;
-    margin-right: 10px;
+    color: #888;
+    font-size: 16px;
 }
 
 .input-group input {
     flex: 1;
     background: none;
     border: none;
-    color: white;
+    color: black;
     font-size: 14px;
     outline: none;
     min-width: 0;
+    padding: 8px;
 }
 
-.small-btn {
-    background: #dddddd;
+.input-group button {
+    background: #ddd;
     border: none;
     color: black;
     padding: 5px 8px;
@@ -91,6 +99,11 @@ label {
     white-space: nowrap;
 }
 
+.input-group button:hover {
+    background: #4A90E2;
+}
+
+/* Submit and Register Buttons */
 .submit-btn, .register-btn {
     width: 100%;
     background: white;
@@ -101,10 +114,12 @@ label {
     cursor: pointer;
     border-radius: 5px;
     margin-top: 15px;
+    transition: background 0.3s ease;
 }
 
 .submit-btn:hover, .register-btn:hover {
-    background: #a93226;
+    background: #4A90E2;
+    color: white;
 }
 
 /* Responsive Design */
@@ -147,3 +162,5 @@ label {
 
     h2 {
         font-size: 18px;
+    }
+}

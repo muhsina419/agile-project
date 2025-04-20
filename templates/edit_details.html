@@ -1,0 +1,62 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-Poll - Candidates List</title>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/edit_details.css' %}">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <div class="menu-icon">&#9776;</div>
+      <div class="logo">D-POLL</div>
+      <img src="profile.png" alt="Profile" class="profile-img" />
+    </div>
+  </header>
+
+  <main>
+    <h1>Edit / Update Details</h1>
+    <section class="form-section">
+      <h2>Edit Personal Information</h2>
+      <form id="updateForm">
+        <label>Full name
+          <input type="text" placeholder="ex: Adam" name="fullName" required />
+        </label>
+
+        <label>Email address
+          <div class="input-with-icon">
+            <span>📧</span>
+            <input type="email" name="email" value="" required />
+          </div>
+        </label>
+
+        <label>Phone number
+          <div class="input-with-icon">
+            <span>📞</span>
+            <input type="tel" name="phone" value="+00 0342 0453 34" required />
+          </div>
+        </label>
+
+        <label>Date of birth
+          <input type="date" name="dob" />
+</div>
+
+   
+
+        <label>Address
+          <textarea name="address" rows="3" placeholder="Enter your address here..."></textarea>
+        </label>
+
+        <div class="buttons">
+          <button type="submit" class="update-btn">Update</button>
+          <button type="reset" class="reset-btn">Reset</button>
+        </div>
+      </form>
+    </section>
+  </main>
+  <script src="{% static 'js/edit_details.js' %}"></script>
+</body>
+</html>

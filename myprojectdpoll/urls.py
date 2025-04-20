@@ -25,10 +25,13 @@ urlpatterns = [
     path('polls/', views.polls_view, name='polls'), 
     path('candidates', views.get_candidates, name='get_candidates'),
     path('vote', views.submit_vote, name='submit_vote'),
+    path('vote-stats/', views.get_voting_stats, name='vote-stats'),
     path('voting-success/', views.voting_success, name='voting_success'),
 ]
+
 
 # Add static file handling for development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)  
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) 
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) 

@@ -1,49 +1,46 @@
-{% extends 'base.html' %}
 {% load static %}
-{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D-Poll - Voters List</title>
+  <meta charset="UTF-8">
+  <title>Voters List</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/voterslist.css' %}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<!-- Page Header -->
-<div class="voters-header">
-  <h1>Voters List</h1>
-  <p>List of voters in the system</p>
-</div>
-
-<!-- Search Bar -->
-<div class="search-container">
-  <input type="text" placeholder="Search Voter" class="search-input" onkeyup="filterVoters()">
-</div>
-
-<!-- Voters List Table Styled as Cards -->
-<div class="voters-list-container">
-  <div class="voter-row header">
-    <span>Photo</span>
-    <span>Unique ID</span>
-    <span>Name</span>
-  </div>
-
-  {% for voter in voters %}
-  <div class="voter-row" onclick="showVoterDetails({{ voter|safe }})">
-    <div class="voter-photo">
-      <img src="{{ voter.photo|default:'/static/images/default-photo.png' }}" alt="Voter Photo">
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="hamburger">&#9776;</div>
+    <div class="logo">D-POLL</div>
+    <div class="profile-info">
+      <div class="tooltip">
+        <div>Unique Id <span>****************</span></div>
+        <div>Voting Status <span>Pending / Voted</span></div>
+      </div>
     </div>
-    <div class="voter-id">{{ voter.unique_id }}</div>
-    <div class="voter-name">{{ voter.name }}</div>
   </div>
-  {% empty %}
-  <div class="no-voters">No voters found.</div>
-  {% endfor %}
-</div>
 
-<!-- Voter Details Modal -->
-<div id="voterDetails" class="voter-details hidden">
-  <!-- Voter details will be dynamically inserted here -->
-</div>
-<script src="{% static 'js/voterslist.js' %}"></script>
-{% endblock %}
+  <!-- Main Section -->
+  <div class="main">
+    <h1>Voters List</h1>
+    <p>List of voters in the system</p>
+    <input type="text" placeholder="Search Voter" class="search-box">
+
+    <div class="table">
+      <div class="table-header">
+        <div>Photo</div>
+        <div>Unique Id</div>
+        <div>Name</div>
+      </div>
+      {% for voter in voters %}
+      <div class="table-row">
+        <div><div class="photo"></div></div>
+        <div class="uid">{{ voter.unique_id }}</div>
+        <div class="name">{{ voter.full_name }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <script src="{% static 'js/voterslist.js' %}"></script>
+</body>
+</html>

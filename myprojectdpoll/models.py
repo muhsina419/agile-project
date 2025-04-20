@@ -109,6 +109,17 @@ class Candidate(models.Model):
     representation = models.CharField(max_length=255)
     symbol = models.ImageField(upload_to='symbols/', null=True, blank=True)
     photo = models.ImageField(upload_to='photos/', null=True, blank=True)
+    votes= models.IntegerField(default=0)
+    
+    def __str__(self):
+        return self.name
 
+class Vote(models.Model):
+    candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    count = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.candidate.name} - {self.count} votes"
     def __str__(self):
         return self.name

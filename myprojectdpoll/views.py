@@ -30,6 +30,17 @@ from .models import Candidate  # Ensure this import is correct
 from .forms import SetPasswordForm
 from .helpers import send_forget_password_mail
 from .util import send_otp, generate_otp
+from django.http import JsonResponse
+from .models import Candidate, Vote
+from django.db.models import Sum
+from datetime import timedelta, date
+from django.contrib.auth.hashers import check_password
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import SetPassword, Voter
+from datetime import datetime
+import json
+
 
 from .models import SetPassword  # Make sure this import is correct
 # **Unique ID Generator**
@@ -245,13 +256,6 @@ def set_password(request, unique_id):
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
-from django.contrib.auth.hashers import check_password
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from .models import SetPassword, Voter
-from datetime import datetime
-import json
-
 @csrf_exempt
 def login_voter(request):
     if request.method == 'POST':
@@ -332,6 +336,7 @@ def ForgetPassword(request):
     return render(request, 'forgot.html')
 
 def voters_list_view(request):
+    voters = Voter.objects.all().values('unique_id', 'full_name', 'photo')  # Fetch required fields
     return render(request, 'voterslist.html')
 
 def candidates_list_view(request):
@@ -370,3 +375,35 @@ from django.shortcuts import render
 
 def voting_success(request):
     return render(request, 'voting_success.html')
+
+
+def get_voting_stats(request):
+    candidates = Candidate.objects.all()
+    stats = [
+        {
+            "name": candidate.name,
+            "votes": candidate.votes,  # Access the votes field
+            "symbol": request.build_absolute_uri(candidate.symbol.url) if candidate.symbol else None,
+        }
+        for candidate in candidates
+    ]
+    total_votes = sum(candidate.votes for candidate in candidates)
+    trend = [candidate.votes for candidate in candidates]  # Example trend data
+    return JsonResponse({"totalVotes": total_votes, "candidates": stats, "trend": trend}, safe=False)
+
+@csrf_exempt
+def submit_vote(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            candidate_id = data.get("candidateId")
+            candidate = Candidate.objects.get(id=candidate_id)
+            candidate.votes += 1  # Increment the vote count
+            candidate.save()
+            
+            return JsonResponse({"message": "Vote cast successfully", "candidateId": candidate_id}, status=200)
+        except Candidate.DoesNotExist:
+            return JsonResponse({"error": "Candidate not found"}, status=404)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method"}, status=400)

@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .then(data => {
             console.log("Vote submitted successfully:", data);
-            alert("Vote submitted successfully!");
+            window.location.href = "/voting_success/";
           })
           .catch(err => {
             console.error("Error submitting vote:", err);
