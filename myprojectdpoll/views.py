@@ -126,16 +126,16 @@ def register_view(request):
     return render(request, 'register.html')
 
 def send_otp(phone_number, otp):
-    """Send OTP to the user's phone number using an SMS gateway."""
+    """Send OTP to the user's phone number using an SMS gateway.
     # Replace this with actual SMS gateway integration
     print(f"Sending OTP {otp} to phone number {phone_number}")
-    # Example: Use Twilio, Nexmo, or any SMS API here
-    # twilio_client.messages.create(
-    #     body=f"Your OTP is {otp}",
-    #     from_="+1234567890",  # Replace with your Twilio number
-    #     to=phone_number
-    # )
-    return True
+     #Example: Use Twilio, Nexmo, or any SMS API here
+     twilio_client.messages.create(
+        body=f"Your OTP is {otp}",
+         from_="+1234567890",  # Replace with your Twilio number
+         to=phone_number
+    )
+    return True"""
 
 # **OTP Verification & Login**
 @csrf_exempt
@@ -320,6 +320,10 @@ def voters_list_api(request):
         voter['photo'] = request.build_absolute_uri(voter['photo']) if voter['photo'] else None
     return JsonResponse(list(voters), safe=False)
 
+def voters_list_view(request):
+    voters = Voter.objects.all()  # Fetch all voters from the database
+    return render(request, 'voterslist.html', {'voters': voters})
+
 def Logout(request):
     logout(request)
     return redirect('/')
@@ -334,10 +338,6 @@ def ChangePassword(request, token):
 
 def ForgetPassword(request):
     return render(request, 'forgot.html')
-
-def voters_list_view(request):
-    voters = Voter.objects.all().values('unique_id', 'full_name', 'photo')  # Fetch required fields
-    return render(request, 'voterslist.html')
 
 def candidates_list_view(request):
     candidates = Candidate.objects.all()  # Fetch all candidates from the database

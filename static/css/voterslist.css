@@ -118,7 +118,7 @@ h1 {
 .photo {
   width: 35px;
   height: 35px;
+  object-fit: contain;
   background-color: black;
   border-radius: 50%;
-  display: inline-block;
 }
