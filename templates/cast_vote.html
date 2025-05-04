@@ -1,3 +1,4 @@
+<!-- filepath: c:\Users\muhsi\OneDrive\Desktop\DPOLL\templates\cast_vote.html -->
 {% load static %}
 
 <!DOCTYPE html>
@@ -23,6 +24,9 @@
     <p>Select a candidate and submit your vote.</p>
 
     <form id="votingForm" class="voting-form">
+      <!-- Hidden input to store the user's unique ID -->
+      <input type="hidden" id="uniqueId" value="{{ unique_id }}">
+
       <table>
         <thead>
           <tr>

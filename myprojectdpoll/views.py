@@ -25,7 +25,7 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Voter, Profile, SetPassword
+from .models import Voter, Profile, SetPassword, UserProfile
 from .models import Candidate  # Ensure this import is correct
 from .forms import SetPasswordForm
 from .helpers import send_forget_password_mail
@@ -335,6 +335,19 @@ def profile_view(request):
 def ChangePassword(request, token):
     return render(request, 'changepass.html')
 
+def get_candidates(request):
+    candidates = Candidate.objects.all()
+    candidate_list = []
+
+    for candidate in candidates:
+        candidate_list.append({
+            "name": candidate.name,
+            "photo": request.build_absolute_uri(candidate.photo.url) if candidate.photo else None,
+            "symbol": request.build_absolute_uri(candidate.symbol.url) if candidate.symbol else None,
+            "_id": candidate.id,
+        })
+
+    return JsonResponse(candidate_list, safe=False)
 
 def ForgetPassword(request):
     return render(request, 'forgot.html')
@@ -343,11 +356,50 @@ def candidates_list_view(request):
     candidates = Candidate.objects.all()  # Fetch all candidates from the database
     return render(request, 'candidates_list.html', {'candidates': candidates})
 
+@csrf_exempt
 def cast_vote_view(request):
-    return render(request, 'cast_vote.html')
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            unique_id = data.get("unique_id")
+            candidate_id = data.get("candidate_id")
+
+            if not unique_id or not candidate_id:
+                return JsonResponse({"error": "Missing unique_id or candidate_id"}, status=400)
+
+            # Validate user and candidate
+            user = get_object_or_404(UserProfile, unique_id=unique_id)
+            candidate = get_object_or_404(Candidate, id=candidate_id)
+
+            # Check if the user has already voted
+            if Vote.objects.filter(user=user).exists():
+                return JsonResponse({"error": "You have already voted."}, status=403)
+
+            # Record the vote
+            Vote.objects.create(user=user, candidate=candidate)
+
+            # Increment the candidate's vote count
+            candidate.votes += 1
+            candidate.save()
+
+            return JsonResponse({"message": "Vote submitted successfully!"}, status=200)
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 def results_view(request):
-    return render(request, 'results.html')
+    candidates = Candidate.objects.all()
+    results = [
+        {
+            "name": candidate.name,
+            "votes": candidate.votes,
+            "symbol": request.build_absolute_uri(candidate.symbol.url) if candidate.symbol else None,
+        }
+        for candidate in candidates
+    ]
+    return render(request, 'results.html', {'results': results})
 
 def edit_details_view(request):
     return render(request, 'edit_details.html')
@@ -355,21 +407,37 @@ def edit_details_view(request):
 def polls_view(request):
     return render(request, 'polls.html')
 
-def get_candidates(request):
-    candidates = Candidate.objects.all().values("id", "name", "photo", "symbol")
-    return JsonResponse(list(candidates), safe=False)
+
+
+from django.contrib.auth.decorators import login_required
 
 @csrf_exempt
 def submit_vote(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            candidate_id = data.get("candidateId")
-            # Process the vote (e.g., save to database)
-            return JsonResponse({"message": "Vote submitted successfully!"})
+            user_unique_id = data.get("unique_id")  # Fetch unique_id from request
+            candidate_id = data.get("candidate_id")  # Fetch candidate_id from request
+
+            # Validate user and candidate
+            user = get_object_or_404(UserProfile, unique_id=user_unique_id)
+            candidate = get_object_or_404(Candidate, id=candidate_id)
+
+            # Check if the user has already voted
+            if Vote.objects.filter(user=user).exists():
+                return JsonResponse({"error": "You have already voted."}, status=403)
+
+            # Record the vote
+            Vote.objects.create(user=user, candidate=candidate)
+
+            # Increment the candidate's vote count
+            candidate.votes += 1
+            candidate.save()
+
+            return JsonResponse({"message": "Vote submitted successfully!"}, status=200)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=400)
-    return JsonResponse({"error": "Invalid request method."}, status=405)
+            return JsonResponse({"error": str(e)}, status=500)
+    return JsonResponse({"error": "Invalid request method."}, status=400)
 
 from django.shortcuts import render
 
@@ -391,19 +459,39 @@ def get_voting_stats(request):
     trend = [candidate.votes for candidate in candidates]  # Example trend data
     return JsonResponse({"totalVotes": total_votes, "candidates": stats, "trend": trend}, safe=False)
 
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import UserProfile, Candidate, Vote  # Import UserProfile
+
 @csrf_exempt
 def submit_vote(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            candidate_id = data.get("candidateId")
+            user_unique_id = data.get("unique_id")  # Fetch unique_id from request
+            candidate_id = data.get("candidate_id")  # Fetch candidate_id from request
+
+            # Validate user and candidate
+            user = UserProfile.objects.get(unique_id=user_unique_id)
             candidate = Candidate.objects.get(id=candidate_id)
-            candidate.votes += 1  # Increment the vote count
+
+            # Check if the user has already voted
+            if Vote.objects.filter(user=user).exists():
+                return JsonResponse({"error": "You have already voted."}, status=403)
+
+            # Record the vote
+            Vote.objects.create(user=user, candidate=candidate)
+
+            # Increment the candidate's vote count
+            candidate.votes += 1
             candidate.save()
-            
-            return JsonResponse({"message": "Vote cast successfully", "candidateId": candidate_id}, status=200)
+
+            return JsonResponse({"message": "Vote submitted successfully!"}, status=200)
+        except UserProfile.DoesNotExist:
+            return JsonResponse({"error": "User not found."}, status=404)
         except Candidate.DoesNotExist:
-            return JsonResponse({"error": "Candidate not found"}, status=404)
+            return JsonResponse({"error": "Candidate not found."}, status=404)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-    return JsonResponse({"error": "Invalid request method"}, status=400)
+    return JsonResponse({"error": "Invalid request method."}, status=400)

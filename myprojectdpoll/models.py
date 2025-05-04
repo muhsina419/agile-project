@@ -115,11 +115,15 @@ class Candidate(models.Model):
         return self.name
 
 class Vote(models.Model):
+    user = models.OneToOneField(
+        UserProfile,
+        on_delete=models.CASCADE,
+        default=None,  # Set a default value for existing rows
+        null=True,
+        blank=True
+    )
     candidate = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
-    count = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.candidate.name} - {self.count} votes"
-    def __str__(self):
-        return self.name
+        return f"Vote by {self.user.unique_id} for {self.candidate.name}"
