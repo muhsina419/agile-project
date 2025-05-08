@@ -113,10 +113,11 @@ class Candidate(models.Model):
     
     def __str__(self):
         return self.name
+    
 
 class Vote(models.Model):
     user = models.OneToOneField(
-        UserProfile,
+        Voter,
         on_delete=models.CASCADE,
         default=None,  # Set a default value for existing rows
         null=True,

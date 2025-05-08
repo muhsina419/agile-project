@@ -25,7 +25,7 @@
 
     <form id="votingForm" class="voting-form">
       <!-- Hidden input to store the user's unique ID -->
-      <input type="hidden" id="uniqueId" value="{{ unique_id }}">
+      <input type="hidden" id="uniqueId" value="{{ user.unique_id }}">
 
       <table>
         <thead>
@@ -38,12 +38,12 @@
           </tr>
         </thead>
         <tbody id="candidateTableBody">
-          <!-- Populated dynamically by JS -->
+            
         </tbody>
       </table>
 
       <div class="button-group">
-        <button type="submit" class="submit-btn">Submit Vote</button>
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Vote</button>
         <button type="button" class="clear-btn" id="clearBtn">Clear</button>
       </div>
     </form>

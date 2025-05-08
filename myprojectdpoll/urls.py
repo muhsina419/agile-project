@@ -24,9 +24,9 @@ urlpatterns = [
     path('api/voters/', views.voters_list_api, name='voters_list_api'),
     path('polls/', views.polls_view, name='polls'),
     path('candidates/', views.get_candidates, name='get_candidates'),  # Added trailing slash
-    path('api/vote/', views.submit_vote, name='submit_vote'),  # Added trailing slash
     path('vote-stats/', views.get_voting_stats, name='vote-stats'),
     path('voting-success/', views.voting_success, name='voting_success'),
+    path('submit-vote/', views.submit_vote, name='submit_vote'),
 ]
 
 # Add static file handling for development

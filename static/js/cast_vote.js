@@ -2,28 +2,33 @@ document.addEventListener("DOMContentLoaded", () => {
     const tableBody = document.getElementById("candidateTableBody");
     const form = document.getElementById("votingForm");
     const clearBtn = document.getElementById("clearBtn");
+    let checkboxes = []; // Declare checkboxes at a broader scope
 
     // Fetch candidates from backend
     fetch("/api/candidates")
         .then(response => response.json())
         .then(candidates => {
-            tableBody.innerHTML = "";
+            if (!Array.isArray(candidates) || candidates.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5">No candidates available.</td></tr>`;
+                return;
+            }
 
+            tableBody.innerHTML = "";
             candidates.forEach((candidate, index) => {
                 const row = document.createElement("tr");
-
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td>${candidate.name}</td>
-                    <td><img src="${candidate.photo || '/static/images/default-photo.jpg'}" class="avatar" alt="Photo" /></td>
-                    <td><img src="${candidate.symbol || '/static/images/default-symbol.png'}" class="symbol-img" alt="Symbol" /></td>
+                    <td><img src="${candidate.photo ? candidate.photo : '/static/images/default-photo.jpg'}" class="avatar" alt="Photo" /></td>
+                    <td><img src="${candidate.symbol ? candidate.symbol : '/static/images/default-symbol.png'}" class="symbol-img" alt="Symbol" /></td>
                     <td><input type="checkbox" name="vote" value="${candidate._id}" class="vote-checkbox" /></td>
                 `;
-
                 tableBody.appendChild(row);
             });
 
-            // Allow only one checkbox at a time
+            // Initialize checkboxes after candidates are loaded
+            checkboxes = document.querySelectorAll(".vote-checkbox");
+            console.log("checkboxes initialized",checkboxes);
             setupSingleSelection();
         })
         .catch(err => {
@@ -32,11 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     function setupSingleSelection() {
-        const checkboxes = document.querySelectorAll(".vote-checkbox");
-
         checkboxes.forEach(box => {
             box.addEventListener("change", () => {
                 if (box.checked) {
+                    console.log('Checkbox selected: ${box.value}');
                     checkboxes.forEach(cb => {
                         if (cb !== box) cb.checked = false;
                     });
@@ -51,25 +55,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     form.addEventListener("submit", e => {
         e.preventDefault();
-        const selected = [...checkboxes].find(cb => cb.checked);
+        console.log("Form submitted")
+        const selected = [...checkboxes].find(cb => cb.checked); // Now checkboxes is accessible here
 
         if (!selected) {
             alert("Please select a candidate before submitting.");
             return;
         }
 
-        const uniqueIdElement = document.getElementById("uniqueId");
+        const uniqueIdElement = localStorage.getItem("id")
         if (!uniqueIdElement) {
             alert("Unique ID is missing. Please log in again.");
             return;
         }
-
+        
         const voteData = {
-            unique_id: uniqueIdElement.value, // Fetch unique_id from the hidden input
+            unique_id: uniqueIdElement, // Fetch unique_id from the hidden input
             candidate_id: selected.value
         };
 
-        fetch("/api/vote/", { // Ensure the URL matches your backend
+        // Store unique_id and candidate_id in local storage
+        const uniqueId = uniqueIdElement;
+        const candidateId = selected.value;
+        console.log("storing unique id and candidate id")
+        localStorage.setItem("unique_id", uniqueId);
+        localStorage.setItem("candidate_id", candidateId);
+
+
+        fetch("/api/submit-vote/", { // Ensure the URL matches your backend
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(voteData)
