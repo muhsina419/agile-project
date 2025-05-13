@@ -356,41 +356,6 @@ def candidates_list_view(request):
     candidates = Candidate.objects.all()  # Fetch all candidates from the database
     return render(request, 'candidates_list.html', {'candidates': candidates})
 
-@csrf_exempt
-# def cast_vote_view(request):
-#     candidates = Candidate.objects.all()
-#     if request.method == "POST":
-#         try:
-#             data = json.loads(request.body)
-#             unique_id = data.get("unique_id")
-#             candidate_id = data.get("candidate_id")
-
-#             if not unique_id or not candidate_id:
-#                 return JsonResponse({"error": "Missing unique_id or candidate_id"}, status=400)
-
-#             # Validate user and candidate
-#             user = get_object_or_404(UserProfile, unique_id=unique_id)
-#             candidate = get_object_or_404(Candidate, id=candidate_id)
-
-#             # Check if the user has already voted
-#             if Vote.objects.filter(user=user).exists():
-#                 return JsonResponse({"error": "You have already voted."}, status=403)
-
-#             # Record the vote
-#             Vote.objects.create(user=user, candidate=candidate)
-
-#             # Increment the candidate's vote count
-#             candidate.votes += 1
-#             candidate.save()
-
-#             return JsonResponse({"message": "Vote submitted successfully!"}, status=200)
-#         except json.JSONDecodeError:
-#             return JsonResponse({"error": "Invalid JSON data"}, status=400)
-#         except Exception as e:
-#             return JsonResponse({"error": str(e)}, status=500)
-#     # return JsonResponse({"error": "Invalid request method."}, status=400)
-#     return render(request,"cast_vote.html",{"data": candidates})
-
 def cast_vote_view(request):
     # Render the voting page only
     candidates = Candidate.objects.all()
@@ -408,13 +373,76 @@ def results_view(request):
     ]
     return render(request, 'results.html', {'results': results})
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from datetime import datetime
+import re
+from .models import Voter
+
+@csrf_exempt
 def edit_details_view(request):
-    return render(request, 'edit_details.html')
+    if request.method == "POST":
+            try:
+                data = json.loads(request.body)
+
+                # Extract data from the request
+                unique_id = data.get("unique_id")
+                full_name = data.get("fullName", "").strip()
+                email = data.get("email", "").strip()
+                phone = data.get("phone", "").strip()
+                dob_str = data.get("dob", "").strip()
+                address = data.get("address", "").strip()
+
+                # Validate required fields
+                if not all([unique_id, full_name, email, phone, dob_str, address]):
+                    return JsonResponse({"error": "All fields are required"}, status=400)
+
+                # Validate email format
+                if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+                    return JsonResponse({"error": "Invalid email format"}, status=400)
+
+                # Validate phone number (must be 10 digits)
+                if not (phone.isdigit() and len(phone) == 10):
+                    return JsonResponse({"error": "Phone number must be 10 digits"}, status=400)
+
+                # Validate date of birth and age (must be at least 18 years old)
+                try:
+                    dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+                    today = datetime.today().date()
+                    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+                    if age < 18:
+                        return JsonResponse({"error": "You must be at least 18 years old"}, status=400)
+                except ValueError:
+                    return JsonResponse({"error": "Invalid date of birth format. Use YYYY-MM-DD"}, status=400)
+
+                # Fetch the voter record
+                try:
+                    voter = Voter.objects.get(unique_id=unique_id)
+                except Voter.DoesNotExist:
+                    return JsonResponse({"error": "Voter not found"}, status=404)
+
+                # Update voter details
+                voter.full_name = full_name
+                voter.email = email
+                voter.phone = phone
+                voter.dob = dob
+                voter.address = address
+                voter.updated_at = datetime.now()  # Save the updated date and time
+                voter.save()
+
+                return JsonResponse({"message": "Details updated successfully!"}, status=200)
+
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "Invalid JSON data"}, status=400)
+            except Exception as e:
+                return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
+            return JsonResponse({"error": "Invalid request method"}, status=405)
+    return render(request,'edit_details.html')
+
+
 
 def polls_view(request):
     return render(request, 'polls.html')
-
-
 
 from django.contrib.auth.decorators import login_required
 import logging
@@ -465,17 +493,26 @@ from django.shortcuts import render
 def voting_success(request):
     return render(request, 'voting_success.html')
 
-
 def get_voting_stats(request):
     candidates = Candidate.objects.all()
     stats = [
         {
             "name": candidate.name,
-            "votes": candidate.votes,  # Access the votes field
-            "symbol": request.build_absolute_uri(candidate.symbol.url) if candidate.symbol else None,
+            "votes": candidate.votes,  # Number of votes for the candidate
         }
         for candidate in candidates
     ]
-    total_votes = sum(candidate.votes for candidate in candidates)
-    trend = [candidate.votes for candidate in candidates]  # Example trend data
-    return JsonResponse({"totalVotes": total_votes, "candidates": stats, "trend": trend}, safe=False)
+    total_votes = sum(candidate.votes for candidate in candidates)  # Total votes across all candidates
+
+    # Prepare data for the graph (votes vs. candidates)
+    graph_data = {
+        "labels": [candidate.name for candidate in candidates],  # Candidate names
+        "data": [candidate.votes for candidate in candidates],   # Corresponding votes
+    }
+
+    return JsonResponse({
+        "totalVotes": total_votes,
+        "candidates": stats,
+        "graphData": graph_data,  # Data for the graph
+    }, safe=False)
+    

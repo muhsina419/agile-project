@@ -5,7 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D-Poll - Candidates List</title>
+  <title>D-Poll - Edit Details</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/edit_details.css' %}">
 </head>
 <body>
@@ -36,27 +36,29 @@
         <label>Phone number
           <div class="input-with-icon">
             <span>📞</span>
-            <input type="tel" name="phone" value="+00 0342 0453 34" required />
+            <input type="tel" name="phone" placeholder="Enter your phone number" required />
           </div>
         </label>
 
         <label>Date of birth
-          <input type="date" name="dob" />
-</div>
-
-   
+          <input type="date" name="dob" required />
+        </label>
 
         <label>Address
-          <textarea name="address" rows="3" placeholder="Enter your address here..."></textarea>
+          <textarea name="address" rows="3" placeholder="Enter your address here..." required></textarea>
         </label>
 
         <div class="buttons">
           <button type="submit" class="update-btn">Update</button>
           <button type="reset" class="reset-btn">Reset</button>
         </div>
+
+        <!-- Response message element -->
+        <div id="responseMessage" style="color: black; margin-top: 10px;"></div>
       </form>
     </section>
   </main>
+
   <script src="{% static 'js/edit_details.js' %}"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>D-Poll - Candidates List</title>
   <link rel="stylesheet" type="text/css" href="{% static 'css/results.css' %}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -29,6 +30,7 @@
 
     <!-- Statistics Cards -->
     <div class="stats-container" id="stats-container">
+      <canvas id="votesChart" width="400" height="200"></canvas>
       <!-- Dynamic cards inserted by JS -->
     </div>
 
