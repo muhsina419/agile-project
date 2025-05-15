@@ -4,46 +4,6 @@
     padding: 0;
   }
   
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #ffffff;
-    color: #111;
-  }
-  
-  header {
-    background: #4d90fe;
-    padding: 15px 30px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    font-family: monospace;
-  }
-  
-  .hamburger {
-    font-size: 28px;
-    color: white;
-    cursor: pointer;
-  }
-  
-  .profile-img img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-  }
-  
   main {
     padding: 40px 20px;
     text-align: center;

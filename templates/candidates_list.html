@@ -1,31 +1,15 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D-Poll - Candidates List</title>
-  <link rel="stylesheet" type="text/css" href="{% static 'css/candidates_list.css' %}">
-</head>
-<body>
-  <div class="header">
-    <div class="menu-icon">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-    <div class="title">D-POLL</div>
-    <div class="user-profile">
-      <img src="user.png" alt="User Profile" id="profile-img" />
-      <div class="user-dropdown" id="user-dropdown">
-        <div><span>Unique Id</span><span>****************</span></div>
-        <div><span>Voting Status</span><span>Pending / Voted</span></div>
-        <div><span>Eligibility</span><span>Yes / No</span></div>
-      </div>
-    </div>
-  </div>
+{% block title %}
+  Candidates List
+{% endblock title %}
 
+{% block styleUrl %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/candidates_list.css' %}">
+{% endblock styleUrl %}
+
+  {% block content %}
   <div class="main-content">
     <h2>Candidates List</h2>
     <input type="text" id="search-input" placeholder="Search candidates..." />
@@ -67,6 +51,13 @@
       </tbody>
     </table>
   </div>
+  {% endblock content %}
+    
+
+  
+  {% block script %}
   <script src="{% static 'js/candidates_list.js' %}"></script>
-</body>
-</html>
+  {% endblock script %}
+    
+{% comment %} </body>
+</html> {% endcomment %}

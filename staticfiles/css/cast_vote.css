@@ -5,7 +5,7 @@
     font-family: 'Segoe UI', sans-serif;
   }
   
-  .header {
+  /* .header {
     background-color: #4A90E2;
     color: white;
     padding: 1rem;
@@ -28,7 +28,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-  }
+  } */
   
   .voting-container {
     padding: 2rem;

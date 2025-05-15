@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (response.ok) {
+                localStorage.setItem("id",result.id)
                 window.location.href = result.redirect_url;
             } else {
                 alert(result.error || 'Login failed');

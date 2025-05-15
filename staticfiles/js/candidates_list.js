@@ -2,6 +2,7 @@
 const searchInput = document.getElementById('search-input');
 const candidateRows = document.querySelectorAll('#candidate-body tr');
 
+ 
 searchInput.addEventListener('input', function () {
   const value = this.value.toLowerCase();
   candidateRows.forEach(row => {

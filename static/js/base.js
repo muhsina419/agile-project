@@ -1,3 +1,9 @@
+const sidebar = document.getElementById('sidebar');
+    const menu = document.getElementById('menu-icon');       
+        menu.addEventListener("click", () => { 
+              sidebar.classList.toggle("hidden");
+          });
+
 document.addEventListener("DOMContentLoaded", function () {
     // Sidebar Navigation
     document.querySelectorAll(".sidebar li").forEach(item => {

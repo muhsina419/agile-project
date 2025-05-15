@@ -185,7 +185,7 @@ STATIC_URL = '/static/'
 
 # Add the directory where your static files are located
 STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Adjust this path if your static folder is elsewhere
+    BASE_DIR / 'static',  # Adjust this path if your static folder is elsewhere
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Static files will be collected here

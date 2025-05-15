@@ -1,18 +1,22 @@
-
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>D-Poll - Candidates List</title>
-  <link rel="stylesheet" type="text/css" href="{% static 'css/results.css' %}">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  
 </head>
-<body>
+<body> {% endcomment %}
 
-  <!-- Navbar -->
+{% block styleUrl %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/results.css' %}">
+{% endblock styleUrl %}
+
+  {% comment %} <!-- Navbar -->
   <header>
     <nav class="navbar">
       <div class="hamburger">&#9776;</div>
@@ -21,10 +25,11 @@
         <img src="https://i.pravatar.cc/40" alt="Profile" />
       </div>
     </nav>
-  </header>
+  </header> {% endcomment %}
 
-  <!-- Title Section -->
-  <main>
+
+  {% block content %}
+    <main>
     <h1 class="main-title">Voting Statistics</h1>
     <p class="subtitle">Track the voting trends</p>
 
@@ -40,7 +45,12 @@
       <canvas id="votesChart" width="400" height="200"></canvas>
     </div>
   </main>
+  {% endblock content %}
 
-  <script src="{% static 'js/results.js' %}"></script>
-</body>
-</html>
+  {% 
+  {% block script %}
+    <script src="{% static 'js/results.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% endblock script %}
+    %}
+ 

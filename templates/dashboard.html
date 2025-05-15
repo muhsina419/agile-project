@@ -16,8 +16,10 @@
     data-logout-url="{% url 'logout' %}"
 >
     <header>
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <h1>D-POLL</h1>
+        {% block header %}
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+            <h1>D-POLL</h1>
+        {% endblock header %}
     </header>
 
     <div class="container">

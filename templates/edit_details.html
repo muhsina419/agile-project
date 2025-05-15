@@ -1,23 +1,34 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
+{% block title %}
+    Edit Details
+{% endblock title %}
+</title>
+
+{% block styleUrl %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/edit_details.css' %}">
+{% endblock styleUrl %}
+
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>D-Poll - Edit Details</title>
-  <link rel="stylesheet" type="text/css" href="{% static 'css/edit_details.css' %}">
+  <title> 
 </head>
-<body>
-  <header>
+<body> {% endcomment %}
+  {% comment %} <header>
     <div class="navbar">
       <div class="menu-icon">&#9776;</div>
       <div class="logo">D-POLL</div>
       <img src="profile.png" alt="Profile" class="profile-img" />
     </div>
-  </header>
+  </header> {% endcomment %}
 
-  <main>
+
+  {% block content %}
+    <main>
     <h1>Edit / Update Details</h1>
     <section class="form-section">
       <h2>Edit Personal Information</h2>
@@ -58,7 +69,10 @@
       </form>
     </section>
   </main>
+  {% endblock content %}
 
-  <script src="{% static 'js/edit_details.js' %}"></script>
-</body>
-</html>
+  {% 
+  {% block script %}
+    <script src="{% static 'js/edit_details.js' %}"></script>
+  {% endblock script %}
+    %}

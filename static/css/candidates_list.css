@@ -1,64 +1,8 @@
-body {
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #ffffff;
-  }
-  
-  .header {
-    background: #4a90e2;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-  }
-  
-  .menu-icon div {
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 4px 0;
-  }
-  
-  .title {
-    font-family: 'Courier New', monospace;
-    font-size: 1.5em;
-  }
-  
-  .user-profile {
-    position: relative;
-  }
-  
-  .user-profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-  }
-  
-  .user-dropdown {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 50px;
-    background: #444;
-    color: white;
-    padding: 10px;
-    border-radius: 4px;
-    width: 200px;
-  }
-  
-  .user-dropdown div {
-    display: flex;
-    justify-content: space-between;
-    margin: 5px 0;
-    border-bottom: 1px solid #666;
-    padding-bottom: 4px;
-  }
-  
-  .user-profile:hover .user-dropdown {
-    display: block;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
   }
   
   .main-content {
@@ -66,15 +10,17 @@ body {
     text-align: center;
   }
   
+
   #search-input {
-    width: 60%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #4a90e2;
-    border-radius: 5px;
-    margin-bottom: 20px;
+  width: 60%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #4a90e2;
+  border-radius: 5px;
+  margin: 0 auto 20px auto;
+  display: block;
   }
-  
+
   .candidate-table {
     margin: 0 auto;
     width: 80%;
@@ -114,3 +60,17 @@ body {
     display: inline-block;
   }
   
+
+  #sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  color: white;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 200;
+  padding: 20px;
+}

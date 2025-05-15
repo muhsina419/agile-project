@@ -1,10 +1,11 @@
-body {
+* {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #ffffff;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
   }
-  
-  .header {
+
+  /* .header {
     background: #4a90e2;
     color: white;
     padding: 10px 20px;
@@ -59,22 +60,24 @@ body {
   
   .user-profile:hover .user-dropdown {
     display: block;
-  }
+  } */
   
   .main-content {
     padding: 40px;
     text-align: center;
   }
   
+
   #search-input {
-    width: 60%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #4a90e2;
-    border-radius: 5px;
-    margin-bottom: 20px;
+  width: 60%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #4a90e2;
+  border-radius: 5px;
+  margin: 0 auto 20px auto;
+  display: block;
   }
-  
+
   .candidate-table {
     margin: 0 auto;
     width: 80%;
@@ -114,3 +117,17 @@ body {
     display: inline-block;
   }
   
+
+  #sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100%;
+  background-color: #333;
+  color: white;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  z-index: 200;
+  padding: 20px;
+}
