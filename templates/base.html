@@ -6,38 +6,32 @@
     <title>{% block title %}D-POLL{% endblock title %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
     {% block styleUrl %}{% endblock styleUrl %}
-   
-</head>
-<body
-    data-voters-list-url="{% url 'voters_list' %}"
-    data-candidates-list-url="{% url 'candidates_list' %}"
-    data-cast-vote-url="{% url 'cast_vote' %}"
-    data-results-url="{% url 'results' %}"
-    data-edit-details-url="{% url 'edit_details' %}"
-    data-logout-url="{% url 'logout' %}"
->
 
 <header class="topbar">
     {% block header %}
         <div class="menu-icon" id="menu-icon" >☰</div>
         <div class="logo">{% block logo_title %}D-POLL{% endblock logo_title %}</div>
         <div class="profile-icon">
-            <img src="{% static 'images/default_profile.jpg' %}" alt="Profile" id="userImage">
+            {% for user in userprofile %}
+            <img src="{{ user.profile_photo }}" alt="User Profile" onerror="this.src='{% static 'images/profile-placeholder.png' %}'">
+            {% comment %} <img src="{% static 'images/1.png' %}" alt="Profile" id="userImage"> {% endcomment %}
             <div class="userprofile hidden" id="userDetails">
                 <p><strong>Unique ID:</strong> {{ user.unique_id }}</p>
                 <p><strong>Voting Status:</strong> {{ user.voting_status }}</p>
                 <p><strong>Eligibility:</strong> {{ user.eligibility }}</p>
             </div>
+            {% endfor %}
         </div>
     {% endblock header %}
 </header>
 
-<div id="sidebar" class="hidden sidebar">
+<div id="sidebar" class="sidebar">
     <ul>
-        <li data-link="/voters_list/">Voters List</li>
-        <li data-link="/candidates_list/">Candidates List</li>
-        <li data-link="/cast_vote/">Cast Vote</li>
-        <li data-link="/results/">Results</li>
+        <li data-link="{% url 'voters_list' %}">Voters List</li>
+        <li data-link="{% url 'candidates_list' %}">Candidates List</li>
+        <li data-link="{% url 'cast_vote' %}">Cast Vote</li>
+        <li data-link="{% url 'results' %}">Results</li>
+        <li data-link="{% url 'logout' %}">Logout</li>
     </ul>
 </div>
 
@@ -56,5 +50,5 @@
 <script defer src="{% static 'js/base.js' %}"></script>
 {% block script %}
 {% endblock script %}
-</body>
-</html>
+{% comment %} </body>
+</html> {% endcomment %}

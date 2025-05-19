@@ -4,69 +4,6 @@
   background-color: white;
 }
 
-/* Top Blue Bar
-.top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: #5298e0;
-  height: 60px;
-  padding: 0 20px;
-}
-
-.hamburger {
-  font-size: 28px;
-  color: white;
-  cursor: pointer;
-}
-
-.logo {
-  font-family: 'Courier New', monospace;
-  font-weight: bold;
-  font-size: 24px;
-  color: black;
-  margin-right: auto;
-  margin-left: 20px;
-}
-
-.profile-info {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.profile-pic {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.tooltip {
-  position: absolute;
-  top: 55px;
-  right: 0;
-  background-color: #444;
-  color: white;
-  font-size: 14px;
-  padding: 10px;
-  border-radius: 5px;
-  display: block;
-  width: 220px;
-}
-
-.tooltip div {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid #666;
-}
-
-.tooltip div:last-child {
-  border-bottom: none;
-} */
-
 /* Main content */
 .main {
   padding: 40px;

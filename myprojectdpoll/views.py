@@ -115,6 +115,18 @@ def register_view(request):
                 unique_id=unique_id, consent=consent
             )
             voter.save()
+            
+            # **Create UserProfile Record**
+            age = datetime.today().year - dob.year - ((datetime.today().month, datetime.today().day) < (dob.month, dob.day))
+            UserProfile.objects.create(
+                unique_id=unique_id,
+                name=full_name,
+                age=age,
+                email=email,
+                phone_number=phone,
+                profile_photo=photo,  # Use the photo field from Voter
+                has_voted=False  # Default to False
+            )
 
             return JsonResponse({"message": "Registration successful!", "unique_id": voter.unique_id}, status=201)
 
@@ -476,11 +488,19 @@ def submit_vote(request):
 
             # Record the vote
             Vote.objects.create(user=user, candidate=candidate)
-
+        
             # Increment the candidate's vote count
             candidate.votes += 1
             candidate.save()
-
+            
+            # Update the has_voted field in UserProfile
+            try:
+                user_profile = UserProfile.objects.get(unique_id=user_unique_id)
+                user_profile.has_voted = True
+                user_profile.save()
+            except UserProfile.DoesNotExist:
+                return JsonResponse({"error": "User profile not found."}, status=404)
+            
             return JsonResponse({"message": "Vote submitted successfully!"}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON data"}, status=400)
@@ -515,4 +535,34 @@ def get_voting_stats(request):
         "candidates": stats,
         "graphData": graph_data,  # Data for the graph
     }, safe=False)
+
+@login_required
+def get_user_photo(request):
+    unique_id = request.GET.get('unique_id')
+    print(f"Received unique id : {unique_id}")
     
+    if not unique_id:
+        return JsonResponse({"error": "Unique ID is required"}, status=400)
+
+    try:
+        user_profile = UserProfile.objects.get(unique_id=unique_id)
+        return JsonResponse({"photo": user_profile.profile_photo.url if user_profile.profile_photo else None})
+    except UserProfile.DoesNotExist:
+        return JsonResponse({"error": "User not found"}, status=404)
+    
+from .models import UserProfile
+
+def base_view(request):
+    if request.user.is_authenticated:
+        try:
+            # Filter UserProfile for the currently logged-in user
+            userprofile = UserProfile.objects.filter(unique_id=request.session['user_data']['unique_id'])
+        except KeyError:
+            userprofile = None
+    else:
+        userprofile = None
+
+    context = {
+        'userprofile': userprofile
+    }
+    return render(request, 'base.html', context)

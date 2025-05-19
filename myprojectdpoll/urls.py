@@ -27,6 +27,7 @@ urlpatterns = [
     path('vote-stats/', views.get_voting_stats, name='vote-stats'),
     path('voting-success/', views.voting_success, name='voting_success'),
     path('submit-vote/', views.submit_vote, name='submit_vote'),
+    path('get_user_photo/', views.get_user_photo, name='get_user_photo'),
 ]
 
 # Add static file handling for development

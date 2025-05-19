@@ -66,7 +66,6 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class UserProfile(models.Model):
     unique_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
@@ -74,10 +73,10 @@ class UserProfile(models.Model):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, unique=True)
     profile_photo = models.ImageField(upload_to='images/')
+    has_voted = models.BooleanField(default=False)  # New field to track voting status
 
     def __str__(self):
         return self.name
-
 
 class SetPassword(models.Model):
     id = models.AutoField(primary_key=True)

@@ -43,7 +43,7 @@
   }
   
   .candidate-table button {
-    background: #4a90e2;
+    background:white ;
     border: none;
     color: white;
     padding: 10px 20px;
@@ -59,18 +59,3 @@
     background: black;
     display: inline-block;
   }
-  
-
-  #sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 250px;
-  height: 100%;
-  background-color: #333;
-  color: white;
-  transform: translateX(-100%);
-  transition: transform 0.3s ease;
-  z-index: 200;
-  padding: 20px;
-}
