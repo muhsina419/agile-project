@@ -87,7 +87,7 @@ body {
   transform: scale(1.05);
 }
 
-.userprofile {
+.user_profile {
   position: absolute;
   right: 0;
   top: 55px;
@@ -101,7 +101,7 @@ body {
   z-index: 999;
 }
 
-.userprofile p {
+.user_profile p {
   margin-bottom: 8px;
   font-size: 14px;
   line-height: 1.4;

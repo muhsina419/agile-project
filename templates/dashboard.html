@@ -36,11 +36,11 @@
 
         <main>
             <div class="profile">
-                <img src="{{ user.photo }}" alt="User Profile" onerror="this.src='{% static 'images/profile-placeholder.png' %}'">
+                <img src="{{ user.photo }}" alt="User Profile" onerror="this.src='{% static 'images/image.png' %}'">
                 <div class="details">
                     <p><strong>Unique Id :</strong> {{ user.unique_id }}</p>
                     <p><strong>Name :</strong> {{ user.name }} </p>
-                    <p><strong>Age : </strong>{{ user.age }}124</p>
+                    <p><strong>Age : </strong>{{ user.age }}</p>
                     <p><strong>Email :</strong> {{ user.email }}</p>
                     <p><strong>Phone no :</strong> {{ user.phone }}</p>
                 </div>

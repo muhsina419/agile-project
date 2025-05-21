@@ -536,7 +536,7 @@ def get_voting_stats(request):
         "graphData": graph_data,  # Data for the graph
     }, safe=False)
 
-@login_required
+
 def get_user_photo(request):
     unique_id = request.GET.get('unique_id')
     print(f"Received unique id : {unique_id}")
@@ -546,23 +546,35 @@ def get_user_photo(request):
 
     try:
         user_profile = UserProfile.objects.get(unique_id=unique_id)
-        return JsonResponse({"photo": user_profile.profile_photo.url if user_profile.profile_photo else None})
+        eligible = user_profile.age >= 18
+        voting_status="Yes" if user_profile.has_voted else "No"
+        context = {
+            "photo": user_profile.profile_photo.url if user_profile.profile_photo else None,
+            "userData":
+                {"unique_id":user_profile.unique_id,
+                 "eligibility": eligible ,
+                 "voting_status": voting_status
+                 }
+            
+            }
+        return JsonResponse(context,status=200)
     except UserProfile.DoesNotExist:
         return JsonResponse({"error": "User not found"}, status=404)
     
 from .models import UserProfile
-
-def base_view(request):
+def userprofile(request):
     if request.user.is_authenticated:
         try:
-            # Filter UserProfile for the currently logged-in user
-            userprofile = UserProfile.objects.filter(unique_id=request.session['user_data']['unique_id'])
-        except KeyError:
-            userprofile = None
-    else:
-        userprofile = None
+            return {'userprofile': UserProfile.objects.get(user=request.user)}
+        except UserProfile.DoesNotExist:
+            return {'userprofile': None}
+    return {'userprofile': None}
 
-    context = {
-        'userprofile': userprofile
-    }
-    return render(request, 'base.html', context)
+
+def userprofile(request):
+    if request.user.is_authenticated:
+        try:
+            return {'userprofile': UserProfile.objects.get(user=request.user)}
+        except UserProfile.DoesNotExist:
+            return {'userprofile': None}
+    return {'userprofile': None}

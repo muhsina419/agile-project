@@ -12,15 +12,14 @@
         <div class="menu-icon" id="menu-icon" >☰</div>
         <div class="logo">{% block logo_title %}D-POLL{% endblock logo_title %}</div>
         <div class="profile-icon">
-            {% for user in userprofile %}
-            <img src="{{ user.profile_photo }}" alt="User Profile" onerror="this.src='{% static 'images/profile-placeholder.png' %}'">
-            {% comment %} <img src="{% static 'images/1.png' %}" alt="Profile" id="userImage"> {% endcomment %}
-            <div class="userprofile hidden" id="userDetails">
-                <p><strong>Unique ID:</strong> {{ user.unique_id }}</p>
-                <p><strong>Voting Status:</strong> {{ user.voting_status }}</p>
-                <p><strong>Eligibility:</strong> {{ user.eligibility }}</p>
+          
+            <img id="userImage" src="{{ userprofile.profile_photo.url }}" alt="User Profile" onerror="this.src='{% static 'images/profile-placeholder.png' %}'">
+            <div class="user_profile hidden" id="userDetails">
+                <p><strong>Unique ID:</strong> <span id="userUniqueId"></span></p>
+                <p><strong>Voting Status:</strong><span id="userVotingStatus"></span> </p>
+                <p><strong>Eligibility:</strong> <span id="userEligibility"></span></p>
             </div>
-            {% endfor %}
+          
         </div>
     {% endblock header %}
 </header>

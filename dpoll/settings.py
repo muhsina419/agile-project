@@ -84,28 +84,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'myprojectdpoll.context_processors.userprofile',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'dpoll.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-#DATABASES = {
-   # 'default': {
-       # 'ENGINE': 'djongo',
-       # 'NAME': 'd_poll_db',  # Database name (it will be created automatically)
-      #  'ENFORCE_SCHEMA': False,
-        #'CLIENT': {
-           # 'host': 'mongodb+srv://abhinandana:Abhi@nandu8589@cluster1.cdj4h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1',
-       # }
-   # }
-#}
-#username = urllib.parse.quote_plus('abhinandana')
-#password = urllib.parse.quote_plus('Abhi@nandu8589')
 
 
 load_dotenv()  # Load environment variables
